@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
 // Poppins ships as static weights, so they have to be listed explicitly.
@@ -46,7 +48,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://www.youtube.com" />
         <link rel="preconnect" href="https://is1-ssl.mzstatic.com" />
       </head>
-      <body className="h-full">{children}</body>
+      <body className="h-full">
+        {children}
+        {/* Both no-op off Vercel, so local dev and other hosts are unaffected. */}
+        <Analytics />
+        <SpeedInsights />
+      </body>
     </html>
   );
 }
