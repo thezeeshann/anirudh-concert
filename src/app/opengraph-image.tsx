@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-export const alt = "Anirudh — non-stop radio";
+export const alt = "அனிருத் கச்சேரி — Anirudh Concert";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -12,8 +12,8 @@ const portraitSrc = `data:image/jpeg;base64,${portrait}`;
 
 // Satori can't use next/font's woff2, so the TTFs are committed under assets/.
 // Reading them from disk keeps the build free of any network call.
-const poppinsBlack = await readFile(join(process.cwd(), "assets/Poppins-Black.ttf"));
 const poppinsMedium = await readFile(join(process.cwd(), "assets/Poppins-Medium.ttf"));
+const poppinsBlack = await readFile(join(process.cwd(), "assets/Poppins-Black.ttf"));
 
 export default function Image() {
   return new ImageResponse(
@@ -64,9 +64,9 @@ export default function Image() {
           <div
             style={{
               display: "flex",
-              fontSize: 132,
+              fontSize: 108,
               fontWeight: 900,
-              letterSpacing: -6,
+              letterSpacing: -5,
               color: "#fff",
               lineHeight: 1,
               fontFamily: "Poppins",
@@ -77,17 +77,16 @@ export default function Image() {
           <div
             style={{
               display: "flex",
-              marginTop: 26,
-              fontSize: 30,
-              letterSpacing: 10,
-              textTransform: "uppercase",
-              color: "rgba(255,255,255,0.62)",
+              marginTop: 14,
+              fontSize: 44,
+              letterSpacing: 14,
+              color: "rgba(255,255,255,0.7)",
               fontFamily: "Poppins",
             }}
           >
-            Non-stop radio
+            CONCERT
           </div>
-          <div style={{ display: "flex", marginTop: 34, alignItems: "center" }}>
+          <div style={{ display: "flex", marginTop: 30, alignItems: "center" }}>
             <div
               style={{
                 display: "flex",

@@ -67,12 +67,10 @@ number would read low. Backing it with Redis is a two-function swap inside
 Six layers in `src/components/Background.tsx`, all animating transform and opacity only so they
 stay on the compositor:
 
-0. `public/bg.mp4` — a looping concert clip, muted/`playsInline` so it can autoplay. Skipped
-   entirely under reduced motion or `Save-Data`, and paused while the tab is hidden; the
-   procedural layers below carry the page on their own if it never starts.
-1. the current cover, blurred to a colour wash, crossfading on every track change. Over the
-   video it blends as `mix-blend-mode: color`, so the footage stays visible and just takes on
-   the track's palette; with no video it paints normally and lights the page itself.
+0. `public/bg.jpg` — the concert scene, on a 70-second pan/zoom so the page breathes without
+   ever pulling focus.
+1. the current cover, blurred and blended as `mix-blend-mode: color`, crossfading on every
+   track change — the scene stays legible and simply takes on the track's palette.
 2. four drifting radial-gradient stage lights (no blur filter — a radial gradient already
    *is* a soft falloff, and adding one is the usual reason these backgrounds stutter on phones)
 3. drifting dust on a single canvas — 60 particles on desktop, 24 on mobile, capped at 12fps
@@ -85,10 +83,13 @@ stays, because it carries information.
 
 ## Assets
 
-`public/bg.mp4` and `public/anirudh.jpg` came from Pinterest links supplied for this build, and
-the portrait also feeds `src/app/icon.png`, `apple-icon.png` and the generated
-`opengraph-image`. Both are someone else's footage and photography — worth sorting out
-permission before this goes anywhere public.
+`public/bg.jpg` is the supplied concert illustration. `public/anirudh.jpg` came from a Pinterest
+link and also feeds `src/app/icon.png`, `apple-icon.png` and the generated `opengraph-image` —
+that one is someone else's photograph, so worth sorting out permission before this goes public.
+
+The OG card is deliberately set in Latin, not Tamil: Satori (the renderer behind `ImageResponse`)
+does not do full Indic shaping and mis-composed `ரு` in testing. The site wordmark is Tamil,
+where the browser shapes it properly.
 
 `assets/Poppins-*.ttf` are committed because Satori (which renders the OG image) can't read
 next/font's woff2, and reading them from disk keeps the build free of network calls.

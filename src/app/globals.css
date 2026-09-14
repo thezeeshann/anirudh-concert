@@ -3,7 +3,7 @@
 @theme {
   --color-ink: #07050a;
   --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  --font-tamil: var(--font-anek-tamil), var(--font-poppins), ui-sans-serif, sans-serif;
 }
 
 html,
@@ -56,6 +56,14 @@ body {
   }
 }
 
+/* Very slow pan/zoom on the concert scene, so the page breathes without ever
+   drawing attention to itself. */
+@keyframes stage-drift {
+  0%   { transform: scale(1.04) translate3d(0, 0, 0); }
+  50%  { transform: scale(1.12) translate3d(-1.2%, -0.8%, 0); }
+  100% { transform: scale(1.04) translate3d(0, 0, 0); }
+}
+
 @keyframes aurora-a {
   0%   { transform: translate3d(-12%, -8%, 0) scale(1); }
   50%  { transform: translate3d(10%, 6%, 0) scale(1.25); }
@@ -97,6 +105,7 @@ body {
 }
 
 .art-scale { animation: art-drift 44s ease-in-out infinite alternate; }
+.stage-drift { animation: stage-drift 70s ease-in-out infinite; will-change: transform; }
 .aurora { will-change: transform; }
 .aurora-a { animation: aurora-a 28s ease-in-out infinite; }
 .aurora-b { animation: aurora-b 34s ease-in-out infinite; }
@@ -114,6 +123,7 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .art-scale,
+  .stage-drift,
   .aurora,
   .grain,
   .disc,
