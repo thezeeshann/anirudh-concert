@@ -3,7 +3,6 @@
 @theme {
   --color-ink: #07050a;
   --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
-  --font-tamil: var(--font-anek-tamil), var(--font-poppins), ui-sans-serif, sans-serif;
 }
 
 html,
@@ -99,11 +98,6 @@ body {
   100% { transform: translate3d(0, 0, 0); }
 }
 
-@keyframes rise {
-  from { opacity: 0; transform: translate3d(0, 8px, 0); }
-  to   { opacity: 1; transform: translate3d(0, 0, 0); }
-}
-
 .art-scale { animation: art-drift 44s ease-in-out infinite alternate; }
 .stage-drift { animation: stage-drift 70s ease-in-out infinite; will-change: transform; }
 .aurora { will-change: transform; }
@@ -119,15 +113,12 @@ body {
   will-change: transform;
 }
 
-.rise { animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both; }
-
 @media (prefers-reduced-motion: reduce) {
   .art-scale,
   .stage-drift,
   .aurora,
   .grain,
   .disc,
-  .rise,
   .animate-ping {
     animation: none !important;
   }

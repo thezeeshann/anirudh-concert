@@ -2,7 +2,6 @@
 import { Background } from "./Background";
 import { Header } from "./Header";
 import { PlayerPill } from "./PlayerPill";
-import { Wordmark } from "./Wordmark";
 import { usePlayer, YT_SHELL_ID } from "@/hooks/usePlayer";
 import type { Track } from "@/lib/types";
 
@@ -23,12 +22,10 @@ export function Station({ tracks }: { tracks: Track[] }) {
       */}
       <div id={YT_SHELL_ID} aria-hidden tabIndex={-1} />
 
-      <main className="relative z-10 flex min-h-dvh flex-col items-center justify-between">
+      {/* Header is fixed, so the page is just the scene with the player resting
+          on the bottom edge. */}
+      <main className="relative z-10 flex min-h-dvh flex-col items-center justify-end">
         <Header />
-
-        <div className="flex flex-1 items-center justify-center pt-24">
-          <Wordmark />
-        </div>
 
         <div
           className="flex w-full justify-center pb-6"

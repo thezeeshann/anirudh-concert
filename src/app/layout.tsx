@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Anek_Tamil, Poppins } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 
 // Poppins ships as static weights, so they have to be listed explicitly.
@@ -10,15 +10,8 @@ const poppins = Poppins({
   display: "swap",
 });
 
-const TITLE = "அனிருத் கச்சேரி · Anirudh Concert";
+const TITLE = "Anirudh — Live Concert";
 const DESCRIPTION = "Press play. Twenty-one Anirudh Ravichander tracks, back to back.";
-
-// Tamil display face for the wordmark; Poppins has no Tamil glyphs.
-const anekTamil = Anek_Tamil({
-  subsets: ["tamil", "latin"],
-  variable: "--font-anek-tamil",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   // Set NEXT_PUBLIC_SITE_URL once this is deployed so previews resolve the
@@ -29,7 +22,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: TITLE,
     description: DESCRIPTION,
-    siteName: "Anirudh Concert",
+    siteName: "Anirudh Live Concert",
     type: "website",
     locale: "en_US",
   },
@@ -47,7 +40,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${poppins.variable} ${anekTamil.variable} h-full`}>
+    <html lang="en" className={`${poppins.variable} h-full`}>
       <head>
         {/* Shaves a round-trip off the very first play. */}
         <link rel="preconnect" href="https://www.youtube.com" />

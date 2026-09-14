@@ -67,8 +67,9 @@ number would read low. Backing it with Redis is a two-function swap inside
 Six layers in `src/components/Background.tsx`, all animating transform and opacity only so they
 stay on the compositor:
 
-0. `public/bg.jpg` — the concert scene, on a 70-second pan/zoom so the page breathes without
-   ever pulling focus.
+0. `public/bg.jpg` — the concert illustration, on a 70-second pan/zoom so the page breathes
+   without ever pulling focus. There is no centre text: the scene carries the page, with only
+   the header and the player over it.
 1. the current cover, blurred and blended as `mix-blend-mode: color`, crossfading on every
    track change — the scene stays legible and simply takes on the track's palette.
 2. four drifting radial-gradient stage lights (no blur filter — a radial gradient already
@@ -83,13 +84,15 @@ stays, because it carries information.
 
 ## Assets
 
-`public/bg.jpg` is the supplied concert illustration. `public/anirudh.jpg` came from a Pinterest
-link and also feeds `src/app/icon.png`, `apple-icon.png` and the generated `opengraph-image` —
-that one is someone else's photograph, so worth sorting out permission before this goes public.
+`public/bg.jpg` is the supplied concert illustration and is the only image in the project. It
+also generates everything else: `src/app/icon.tsx` and `apple-icon.tsx` zoom into the setting
+sun (a whole concert scene would be mush at 32px), and `opengraph-image.tsx` uses the full
+scene behind the wordmark. All three share `src/lib/sun-icon.tsx` / read the file at module
+scope, so the build makes no network calls.
 
-The OG card is deliberately set in Latin, not Tamil: Satori (the renderer behind `ImageResponse`)
-does not do full Indic shaping and mis-composed `ரு` in testing. The site wordmark is Tamil,
-where the browser shapes it properly.
+Two Satori quirks worth remembering if you edit those: it ignores the `inset` shorthand, so
+absolutely-positioned overlays need explicit `width`/`height`, and it has no Indic shaping —
+Tamil text renders mis-composed, which is why the card is set in Latin.
 
 `assets/Poppins-*.ttf` are committed because Satori (which renders the OG image) can't read
 next/font's woff2, and reading them from disk keeps the build free of network calls.
