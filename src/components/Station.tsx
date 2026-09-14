@@ -7,11 +7,10 @@ import type { Track } from "@/lib/types";
 
 export function Station({ tracks }: { tracks: Track[] }) {
   const player = usePlayer(tracks);
-  const nextTrack = tracks[(player.index + 1) % tracks.length];
 
   return (
     <>
-      <Background artwork={player.track.artwork} nextArtwork={nextTrack.artwork} />
+      <Background />
 
       {/*
         Holds the YouTube iframe. Must never be conditionally rendered or

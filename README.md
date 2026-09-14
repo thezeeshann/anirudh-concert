@@ -64,23 +64,12 @@ number would read low. Backing it with Redis is a two-function swap inside
 
 ## The background
 
-Six layers in `src/components/Background.tsx`, all animating transform and opacity only so they
-stay on the compositor:
+`public/bg.jpg`, rendered exactly as supplied — `background-size: cover` and nothing else. No
+filter, no tint, no vignette, no grain, no overlay of any kind.
 
-0. `public/bg.jpg` — the concert illustration, on a 70-second pan/zoom so the page breathes
-   without ever pulling focus. There is no centre text: the scene carries the page, with only
-   the header and the player over it.
-1. the current cover, blurred and blended as `mix-blend-mode: color`, crossfading on every
-   track change — the scene stays legible and simply takes on the track's palette.
-2. four drifting radial-gradient stage lights (no blur filter — a radial gradient already
-   *is* a soft falloff, and adding one is the usual reason these backgrounds stutter on phones)
-3. drifting dust on a single canvas — 60 particles on desktop, 24 on mobile, capped at 12fps
-   and paused when the tab is hidden
-4. film grain from an inline SVG `feTurbulence`, jittered with a stepped transform
-5. a static vignette
-
-Under `prefers-reduced-motion` the drift stops and the canvas is never mounted; the crossfade
-stays, because it carries information.
+That is a deliberate constraint, not an oversight: contrast for the UI is handled on the UI.
+The header text carries its own `drop-shadow`, and the player sits on a frosted panel with its
+own border. If you add anything to the background layer, you are altering the artwork.
 
 ## Assets
 
