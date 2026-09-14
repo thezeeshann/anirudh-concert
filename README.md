@@ -49,12 +49,30 @@ HTTP responses cache to `scripts/.cache/`, so re-runs are nearly free; `--fresh`
 The playlist contains three songs twice under different Spotify URIs. All 21 slots are kept
 because that's the playlist as given; each distinct song is only resolved once.
 
+## The online count
+
+Real, not decorative. Every open tab POSTs a heartbeat to `/api/presence` every 15s and gets
+the current headcount back; tabs that stop checking in are dropped after 45s, and closing one
+fires a `sendBeacon` so it leaves immediately rather than lingering.
+
+**The one caveat**: the route keeps its state in a module-scope `Map`, so the count is per
+server instance. That is exact for `next dev`, `next start`, and any single-container host
+(Railway, Render, Fly, a VPS). On a platform that spreads requests over several instances —
+Vercel's serverless functions in particular — each instance only sees its own share, so the
+number would read low. Backing it with Redis is a two-function swap inside
+`src/app/api/presence/route.ts`; nothing else in the app changes.
+
 ## The background
 
-No image assets. Five layers in `src/components/Background.tsx`, all animating transform and
-opacity only so they stay on the compositor:
+Six layers in `src/components/Background.tsx`, all animating transform and opacity only so they
+stay on the compositor:
 
-1. the current cover, blurred to a colour wash, crossfading on every track change
+0. `public/bg.mp4` — a looping concert clip, muted/`playsInline` so it can autoplay. Skipped
+   entirely under reduced motion or `Save-Data`, and paused while the tab is hidden; the
+   procedural layers below carry the page on their own if it never starts.
+1. the current cover, blurred to a colour wash, crossfading on every track change. Over the
+   video it blends as `mix-blend-mode: color`, so the footage stays visible and just takes on
+   the track's palette; with no video it paints normally and lights the page itself.
 2. four drifting radial-gradient stage lights (no blur filter — a radial gradient already
    *is* a soft falloff, and adding one is the usual reason these backgrounds stutter on phones)
 3. drifting dust on a single canvas — 60 particles on desktop, 24 on mobile, capped at 12fps
@@ -64,6 +82,16 @@ opacity only so they stay on the compositor:
 
 Under `prefers-reduced-motion` the drift stops and the canvas is never mounted; the crossfade
 stays, because it carries information.
+
+## Assets
+
+`public/bg.mp4` and `public/anirudh.jpg` came from Pinterest links supplied for this build, and
+the portrait also feeds `src/app/icon.png`, `apple-icon.png` and the generated
+`opengraph-image`. Both are someone else's footage and photography — worth sorting out
+permission before this goes anywhere public.
+
+`assets/Poppins-*.ttf` are committed because Satori (which renders the OG image) can't read
+next/font's woff2, and reading them from disk keeps the build free of network calls.
 
 ## Notes
 

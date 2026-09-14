@@ -4,7 +4,13 @@ import { loadYouTubeApi } from "./useYouTubeApi";
 import { PLAY_WATCHDOG_MS, PROGRESS_INTERVAL_MS } from "@/lib/constants";
 import type { PlayerStatus, Progress, Track } from "@/lib/types";
 
-export const YT_HOST_ID = "yt-host";
+/**
+ * React renders this shell and nothing inside it. The YouTube API *replaces* the
+ * element it is given with an iframe, so it is handed a plain div we append
+ * ourselves — if React owned that node, its later cleanup would try to remove a
+ * child that no longer exists and throw NotFoundError/removeChild.
+ */
+export const YT_SHELL_ID = "yt-shell";
 
 type ProgressListener = (p: Progress) => void;
 
@@ -17,6 +23,8 @@ export type PlayerApi = {
   toggle: () => void;
   next: () => void;
   prev: () => void;
+  /** Jump to a fraction (0-1) of the current track. */
+  seek: (fraction: number) => void;
   /** Transient sub-label, e.g. after a track had to be skipped. */
   notice: string | null;
   /** Push-based so the 4Hz progress tick never re-renders the React tree. */
@@ -166,6 +174,21 @@ export function usePlayer(tracks: Track[]): PlayerApi {
     }, PLAY_WATCHDOG_MS);
   }, []);
 
+  const seek = useCallback(
+    (fraction: number) => {
+      const p = playerRef.current;
+      if (!p?.getDuration) return;
+      const duration = p.getDuration();
+      if (!duration) return;
+      const target = Math.min(Math.max(fraction, 0), 1) * duration;
+      p.seekTo(target, true);
+      // Push straight away so the bar tracks the finger instead of waiting for
+      // the next tick.
+      for (const fn of subsRef.current) fn({ position: target, duration });
+    },
+    []
+  );
+
   const pause = useCallback(() => {
     wantPlayRef.current = false;
     clearWatchdog();
@@ -243,7 +266,13 @@ export function usePlayer(tracks: Track[]): PlayerApi {
     loadYouTubeApi()
       .then((YTns) => {
         if (cancelled || playerRef.current) return;
-        playerRef.current = new YTns.Player(YT_HOST_ID, {
+        const shell = document.getElementById(YT_SHELL_ID);
+        if (!shell) return;
+        // Detached from React's reconciler on purpose — see YT_SHELL_ID above.
+        const host = document.createElement("div");
+        shell.appendChild(host);
+
+        playerRef.current = new YTns.Player(host, {
           videoId: tracksRef.current[0].youtube[0],
           width: 320,
           height: 180,
@@ -276,6 +305,10 @@ export function usePlayer(tracks: Track[]): PlayerApi {
       // gesture — see the comment on the effect below about never remounting.
       playerRef.current?.destroy();
       playerRef.current = null;
+      // destroy() usually takes the iframe with it; clear any remnant so a dev
+      // remount starts from an empty shell.
+      const shell = document.getElementById(YT_SHELL_ID);
+      if (shell) shell.replaceChildren();
     };
     // Deliberately empty: the player is created exactly once per session and is
     // never rebuilt. iOS grants media user-activation to the iframe's <video>
@@ -305,6 +338,7 @@ export function usePlayer(tracks: Track[]): PlayerApi {
     toggle,
     next,
     prev,
+    seek,
     notice,
     subscribeProgress,
   };

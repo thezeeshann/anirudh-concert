@@ -3,7 +3,7 @@ import { Background } from "./Background";
 import { Header } from "./Header";
 import { PlayerPill } from "./PlayerPill";
 import { Wordmark } from "./Wordmark";
-import { usePlayer, YT_HOST_ID } from "@/hooks/usePlayer";
+import { usePlayer, YT_SHELL_ID } from "@/hooks/usePlayer";
 import type { Track } from "@/lib/types";
 
 export function Station({ tracks }: { tracks: Track[] }) {
@@ -15,12 +15,13 @@ export function Station({ tracks }: { tracks: Track[] }) {
       <Background artwork={player.track.artwork} nextArtwork={nextTrack.artwork} />
 
       {/*
-        The YouTube API replaces this node with its iframe. It must never be
-        conditionally rendered or remounted: the player instance is created once
-        and kept for the whole session, which is what lets tracks after the first
-        auto-play on iOS without another tap.
+        Holds the YouTube iframe. Must never be conditionally rendered or
+        remounted: the player is created once and kept for the whole session,
+        which is what lets tracks after the first auto-play on iOS without
+        another tap. React deliberately renders it empty — the iframe is
+        appended outside the reconciler.
       */}
-      <div id={YT_HOST_ID} aria-hidden tabIndex={-1} />
+      <div id={YT_SHELL_ID} aria-hidden tabIndex={-1} />
 
       <main className="relative z-10 flex min-h-dvh flex-col items-center justify-between">
         <Header />

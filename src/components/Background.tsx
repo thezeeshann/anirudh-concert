@@ -1,6 +1,8 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ParticleField } from "./ParticleField";
+import { VideoBackdrop } from "./VideoBackdrop";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { ARTWORK_FADE_MS } from "@/lib/constants";
 
 /**
@@ -16,6 +18,16 @@ export function Background({ artwork, nextArtwork }: { artwork: string; nextArtw
   // deriving it from `layers` would put `layers` in the dep array below, and the
   // effect would then re-enter on its own setLayers before the ref had flipped.
   const liveRef = useRef(artwork);
+
+  const reduced = useReducedMotion();
+  const [videoActive, setVideoActive] = useState(false);
+  const onVideoActive = useCallback((active: boolean) => setVideoActive(active), []);
+  // Honour reduced motion, and don't spend a metered connection on 5MB of loop.
+  const [allowVideo, setAllowVideo] = useState(false);
+  useEffect(() => {
+    const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+    setAllowVideo(!reduced && !conn?.saveData);
+  }, [reduced]);
 
   useEffect(() => {
     if (!artwork || liveRef.current === artwork) return;
@@ -58,13 +70,19 @@ export function Background({ artwork, nextArtwork }: { artwork: string; nextArtw
 
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-[#07050a]">
-      {/* L1 — album art, blurred to a colour wash */}
+      {/* L0 — looping concert footage */}
+      {allowVideo && <VideoBackdrop onActive={onVideoActive} />}
+
+      {/* L1 — album art. Over the video it blends as colour only, so the footage
+          stays visible and merely takes on the current track's palette; with no
+          video it has to carry the background itself, so it paints normally. */}
       {([0, 1] as const).map((i) => (
         <div
           key={i}
           className="art-scale absolute inset-0 transition-opacity ease-in-out"
           style={{
-            opacity: (i === 1) === showB && layers[i] ? 1 : 0,
+            opacity: (i === 1) === showB && layers[i] ? (videoActive ? 0.55 : 1) : 0,
+            mixBlendMode: videoActive ? "color" : "normal",
             transitionDuration: `${ARTWORK_FADE_MS}ms`,
             animationDelay: `${i * -12}s`,
           }}
@@ -81,7 +99,10 @@ export function Background({ artwork, nextArtwork }: { artwork: string; nextArtw
 
       {/* L2 — stage lights. Radial gradients are already a perfect falloff, so
           no blur filter here: adding one is the classic mobile-jank mistake. */}
-      <div className="absolute inset-0 mix-blend-screen">
+      <div
+        className="absolute inset-0 mix-blend-screen transition-opacity duration-1000"
+        style={{ opacity: videoActive ? 0.45 : 1 }}
+      >
         <div
           className="aurora aurora-a absolute left-[-20%] top-[-25%] h-[90vmax] w-[90vmax] rounded-full opacity-50"
           style={{ background: "radial-gradient(circle at 50% 50%, #ff2d78 0%, transparent 68%)" }}

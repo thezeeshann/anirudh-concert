@@ -4,7 +4,7 @@ import { NextIcon, PauseIcon, PlayIcon, PrevIcon } from "./icons";
 import type { PlayerApi } from "@/hooks/usePlayer";
 
 export function PlayerPill({ player, notice }: { player: PlayerApi; notice: string | null }) {
-  const { track, status, toggle, next, prev, subscribeProgress } = player;
+  const { track, status, toggle, next, prev, seek, subscribeProgress } = player;
   const spinning = status === "playing";
   const busy = status === "loading";
   const dead = status === "blocked" || status === "exhausted";
@@ -39,7 +39,12 @@ export function PlayerPill({ player, notice }: { player: PlayerApi; notice: stri
           <p className="truncate text-[12px] text-white/70 sm:text-[13px]">
             {dead ? "Playback unavailable" : (notice ?? track.artist)}
           </p>
-          <SeekBar subscribe={subscribeProgress} fallbackMs={track.durationMs} />
+          <SeekBar
+            subscribe={subscribeProgress}
+            onSeek={seek}
+            fallbackMs={track.durationMs}
+            disabled={dead}
+          />
         </div>
 
         {/* On phones the transport moves below the title so nothing is cramped. */}
@@ -71,7 +76,7 @@ function Transport({
   dead: boolean;
 }) {
   const ghost =
-    "grid h-10 w-10 place-items-center rounded-full text-white/80 transition hover:bg-white/15 hover:text-white active:scale-95 disabled:opacity-40 sm:h-9 sm:w-9";
+    "grid h-10 w-10 cursor-pointer place-items-center rounded-full text-white/80 transition hover:bg-white/15 hover:text-white active:scale-95 disabled:cursor-default disabled:opacity-40 sm:h-9 sm:w-9";
   return (
     <>
       <button type="button" onClick={prev} disabled={dead} aria-label="Previous track" className={ghost}>
@@ -83,7 +88,7 @@ function Transport({
         disabled={dead}
         aria-label={spinning ? "Pause" : "Play"}
         aria-pressed={spinning}
-        className="grid h-12 w-12 place-items-center rounded-full bg-white text-black shadow-lg transition hover:scale-105 active:scale-95 disabled:opacity-40 sm:h-11 sm:w-11"
+        className="grid h-12 w-12 cursor-pointer place-items-center rounded-full bg-white text-black shadow-lg transition hover:scale-105 active:scale-95 disabled:cursor-default disabled:opacity-40 sm:h-11 sm:w-11"
       >
         {busy ? (
           <span className="h-4 w-4 animate-spin rounded-full border-2 border-black/25 border-t-black" />

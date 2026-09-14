@@ -4,13 +4,15 @@ import { useOnlineCount } from "@/hooks/useOnlineCount";
 import { SPOTIFY_URL, YTMUSIC_URL } from "@/lib/constants";
 import { ArrowIcon, SpotifyIcon, YTMusicIcon } from "./icons";
 
-const shadow = "drop-shadow-[0_1px_6px_rgba(0,0,0,0.55)]";
+// One tone for all three header items, so the clock, the online badge and the
+// links read as a single row rather than three competing brightnesses.
+const TONE = "text-white/75 drop-shadow-[0_1px_6px_rgba(0,0,0,0.55)]";
 
 function Clock() {
   const time = useClock();
   // Width is reserved so the real value landing after hydration shifts nothing.
   return (
-    <span className={`min-w-[4.5ch] text-sm font-medium tabular-nums text-white ${shadow}`}>
+    <span className={`min-w-[4.5ch] text-sm font-medium tabular-nums ${TONE}`}>
       {time ?? " "}
     </span>
   );
@@ -20,15 +22,16 @@ function OnlineBadge() {
   const n = useOnlineCount();
   return (
     <div
-      className={`inline-flex items-center gap-2 text-sm font-medium text-white ${shadow}`}
+      className={`inline-flex items-center gap-2 text-sm font-medium ${TONE}`}
       aria-live="polite"
     >
       <span className="relative flex h-2.5 w-2.5">
         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
         <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.9)]" />
       </span>
-      <span className="tabular-nums">{n}</span>
-      <span className="text-white/70">online</span>
+      {/* Width reserved so the first real count doesn't nudge the row. */}
+      <span className="min-w-[1.5ch] tabular-nums">{n ?? "—"}</span>
+      <span>online</span>
     </div>
   );
 }
@@ -40,12 +43,12 @@ function Pill({ href, label, children }: { href: string; label: string; children
       target="_blank"
       rel="noopener noreferrer"
       aria-label={label}
-      className={`group flex items-center gap-2 rounded-full p-2.5 text-sm font-medium text-white transition hover:opacity-80 active:scale-95 sm:py-2 sm:pl-3 sm:pr-3.5 ${shadow}`}
+      className={`group flex cursor-pointer items-center gap-2 rounded-full p-2.5 text-sm font-medium transition hover:text-white active:scale-95 sm:py-2 sm:pl-3 sm:pr-3.5 ${TONE}`}
     >
       {children}
       {/* Labels collapse on mobile so the pills can't collide with the clock. */}
       <span className="hidden sm:inline">{label}</span>
-      <ArrowIcon className="hidden h-3.5 w-3.5 -rotate-45 opacity-50 transition group-hover:opacity-90 sm:inline" />
+      <ArrowIcon className="hidden h-3.5 w-3.5 -rotate-45 opacity-60 transition group-hover:opacity-100 sm:inline" />
     </a>
   );
 }
