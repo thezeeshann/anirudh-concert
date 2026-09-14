@@ -55,7 +55,7 @@ function Pill({ href, label, children }: { href: string; label: string; children
 
 export function Header() {
   return (
-    <header className="pointer-events-none fixed inset-x-0 top-0 z-20 flex items-center justify-between px-4 pt-4 sm:px-5 sm:pt-5">
+    <header className="pointer-events-none fixed inset-x-0 top-0 z-20 flex items-center justify-between px-4 pt-2 sm:px-5 sm:pt-2.5">
       <div className="pointer-events-auto flex-1">
         <Clock />
       </div>
