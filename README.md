@@ -6,13 +6,14 @@ play, and the songs run back to back. Built with Next.js 16, React 19 and Tailwi
 ## Features
 
 - **TypeScript** - For type safety and improved developer experience
-- **Next.js** - App Router, fully static output
+- **Next.js** - App Router and React Server Components
 - **TailwindCSS** - Utility-first CSS for rapid UI development
 - **Full-length playback** - A hidden YouTube IFrame player, so no login or API key is needed
+- **Shuffled playback** - Every visit opens on a different song; the order then stays put
 - **Four controls** - Play/pause, next, previous and a seekable progress bar
 - **Live listener count** - `/api/presence` counts real open tabs by heartbeat
 - **Generated icons** - Favicon, Apple touch icon and OG card built from one source photo
-- **Mobile responsive** - `dvh` units and safe-area insets so the player clears browser chrome
+- **Mobile responsive** - A portrait backdrop below `sm`, plus `dvh` units and safe-area insets
 
 ## Getting Started
 
@@ -32,8 +33,8 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to see the s
 
 ## Playlist Data
 
-`src/data/tracks.json` is a committed build artifact, so the deployed site makes no API calls.
-Regenerate it only when the playlist changes:
+`src/data/tracks.json` is a committed build artifact, so the site never calls an API for the
+playlist. Regenerate it only when the playlist changes:
 
 ```bash
 npm run tracks
@@ -48,14 +49,14 @@ search picks the wrong upload.
 ```
 anirudh/
 ├── assets/                     # Fonts for the OG image renderer
-├── public/                     # bg.jpg, anirudh.jpg
+├── public/                     # bg.jpg, bg-mobile.jpg, anirudh.jpg
 ├── scripts/                    # Playlist resolver and its input
 └── src/
     ├── app/                    # Routes, layout, generated icons and OG card
     ├── components/             # Station, Background, Header, PlayerPill, SeekBar
     ├── data/                   # tracks.json
     ├── hooks/                  # usePlayer, useClock, useOnlineCount
-    └── lib/                    # Types, formatters, icon crop maths
+    └── lib/                    # Types, formatters, shuffle, icon crop maths
 ```
 
 There is no `index.html`. `src/app/layout.tsx` produces the `<html>` and `<head>`, and the
